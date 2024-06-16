@@ -1,0 +1,29 @@
+<!-- src/main/resources/templates/add-nhac.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Nhac</title>
+</head>
+<body>
+<h1>Add New Nhac</h1>
+<form action="/nhac-ui/add" method="post">
+    <label for="ten">Tên nhạc:</label>
+    <input type="text" id="ten" name="ten" th:value="${nhac.ten}">
+
+    <label for="tacgia">Tác giả:</label>
+    <input type="text" id="tacgia" name="tacgia" th:value="${nhac.tacgia}">
+
+    <label for="theloai">Thể loại:</label>
+    <input type="text" id="theloai" name="theloai" th:value="${nhac.theloai}">
+
+    <button type="submit">Thêm nhạc</button>
+</form>
+
+<!-- Thêm phần hiển thị thông báo -->
+<div th:if="${param.message}">
+    <p th:text="${param.message}"></p>
+</div>
+
+</body>
+</html>
