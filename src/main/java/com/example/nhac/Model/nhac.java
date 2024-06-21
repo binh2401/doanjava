@@ -13,6 +13,8 @@ public class nhac {
     private String ten;
     private String tacgia;
     private String theloai;
+    private String audioFile;  // Đường dẫn đến file âm thanh
+    private String imageFile;
 
     public String getId() {
         return id;
@@ -44,5 +46,21 @@ public class nhac {
 
     public void setTheloai(String theloai) {
         this.theloai = theloai;
+    }
+
+    public String getAudioPath() {
+        return audioFile;
+    }
+
+    public void setAudioPath(String audioFile) {
+        this.audioFile = audioFile;
+    }
+
+    public String getImagePath() {
+        return imageFile;
+    }
+
+    public void setImagePath(String imageFile) {
+        this.imageFile = imageFile;
     }
 }

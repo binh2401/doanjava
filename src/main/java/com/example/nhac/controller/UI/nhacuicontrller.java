@@ -1,0 +1,14 @@
+package com.example.nhac.controller.UI;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/")
+public class nhacuicontrller {
+    @GetMapping("/")
+    public String Index(){
+        return  "nhac/nhac-list";
+    }
+}

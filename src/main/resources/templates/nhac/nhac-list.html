@@ -1,15 +1,140 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Nhac List</title>
+    <title>Add Nhac</title>
 </head>
 <body>
-<h1>Nhac List</h1>
-<ul>
-    <li th:each="nhac : ${nhacs}">
-        <span th:text="${nhac.ten}"></span>
-    </li>
-</ul>
+<h1>Add New Nhac</h1>
+
+<!-- Form thêm nhạc và hình ảnh -->
+<form id="addNhacForm" enctype="multipart/form-data">
+    <label for="ten">Tên nhạc:</label>
+    <input type="text" id="ten" name="ten">
+
+    <label for="tacgia">Tác giả:</label>
+    <input type="text" id="tacgia" name="tacgia">
+
+    <label for="theloai">Thể loại:</label>
+    <input type="text" id="theloai" name="theloai">
+
+    <label for="audioFile">File âm thanh:</label>
+    <input type="file" id="audioFile" name="audioFile">
+
+    <label for="imageFile">File hình ảnh:</label>
+    <input type="file" id="imageFile" name="imageFile">
+
+    <button type="button" onclick="addNhac()">Thêm nhạc</button>
+</form>
+
+<!-- Danh sách nhạc -->
+<h2>Danh sách Nhạc</h2>
+<table border="1">
+    <thead>
+    <tr>
+        <th>Tên Nhạc</th>
+        <th>Tác giả</th>
+        <th>Thể loại</th>
+        <th>File âm thanh</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Sử dụng Thymeleaf để lặp qua danh sách nhạc -->
+    <tr th:each="nhac : ${listNhac}">
+        <td th:text="${nhac.ten}"></td>
+        <td th:text="${nhac.tacgia}"></td>
+        <td th:text="${nhac.theloai}"></td>
+        <td>
+            <!-- Dùng thẻ audio để phát file âm thanh -->
+            <audio controls>
+                <source th:src="@{${nhac.audioFile}}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Thêm phần hiển thị thông báo -->
+<div id="messageDiv" th:if="${param.message}">
+    <p th:text="${param.message}"></p>
+</div>
+
+<script>
+    // Function để thêm nhạc
+    function addNhac() {
+        var ten = document.getElementById('ten').value;
+        var tacgia = document.getElementById('tacgia').value;
+        var theloai = document.getElementById('theloai').value;
+        var audioFile = document.getElementById('audioFile').files[0]; // Chọn file âm thanh
+        var imageFile = document.getElementById('imageFile').files[0]; // Chọn file hình ảnh
+
+        var formData = new FormData();
+        formData.append('ten', ten);
+        formData.append('tacgia', tacgia);
+        formData.append('theloai', theloai);
+        formData.append('audioFile', audioFile);
+        formData.append('imageFile', imageFile);
+
+        fetch('/api/nhac/add', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to add nhac');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Success:', data); // Log the response data for debugging
+            alert('Nhạc đã được thêm thành công');
+            document.getElementById('addNhacForm').reset(); // Xóa nội dung form sau khi thêm thành công
+            document.getElementById('messageDiv').innerText = ''; // Xóa thông báo sau khi thêm thành công
+            refreshNhacList(); // Cập nhật lại danh sách nhạc
+        })
+        .catch(error => {
+            console.error('Error adding nhac:', error);
+            document.getElementById('messageDiv').innerText = 'Failed to add nhac. Please try again.';
+        });
+    }
+
+    // Function để cập nhật danh sách nhạc sau khi thêm mới
+    function refreshNhacList() {
+        fetch('/api/nhac')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Fetched nhac list:', data); // Log the fetched data for debugging
+            var nhacList = data;
+            var tableBody = document.querySelector('tbody');
+            tableBody.innerHTML = ''; // Xóa nội dung cũ trong tbody
+
+            nhacList.forEach(nhac => {
+                var row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${nhac.ten}</td>
+                    <td>${nhac.tacgia}</td>
+                    <td>${nhac.theloai}</td>
+                    <td>
+                        <audio controls>
+                               <source th:src="@{${nhac.audioFile}}" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching nhac list:', error);
+        });
+    }
+
+    // Gọi function refreshNhacList khi trang được load
+    document.addEventListener('DOMContentLoaded', function() {
+        refreshNhacList();
+    });
+</script>
+
 </body>
 </html>

@@ -1,10 +1,14 @@
 package com.example.nhac.dbo.request;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class nhaccreaterequest {
     private String id;
     private String ten;
     private String tacgia;
     private String theloai;
+    private MultipartFile audioFile;  // File âm thanh
+    private MultipartFile imageFile;  // File hình ảnh
 
 
     public String getId() {
@@ -37,5 +41,21 @@ public class nhaccreaterequest {
 
     public void setTheloai(String theloai) {
         this.theloai = theloai;
+    }
+
+    public MultipartFile getAudioFile() {
+        return audioFile;
+    }
+
+    public void setAudioFile(MultipartFile audioFile) {
+        this.audioFile = audioFile;
+    }
+
+    public MultipartFile getImageFile() {
+        return imageFile;
+    }
+
+    public void setImageFile(MultipartFile imageFile) {
+        this.imageFile = imageFile;
     }
 }

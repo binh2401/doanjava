@@ -6,37 +6,40 @@ import com.example.nhac.dbo.request.nhacupdaterequest;
 import com.example.nhac.service.nhacservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/nhac")
+@RequestMapping("/api/nhac")
 public class nhaccontroller {
     @Autowired
     private nhacservice nhacservice;
 
     @PostMapping("/add")
-    nhac createnhac (@RequestBody nhaccreaterequest request){
-        return  nhacservice.createRequest(request);
+    public nhac createnhac(@ModelAttribute nhaccreaterequest request) {
+        return nhacservice.createNhac(request);
     }
 
     @GetMapping
-    List<nhac> getnhac(){
-        return nhacservice.getnhac();
-    }
-    @GetMapping("/{nhacid}")
-    nhac getnhac(@PathVariable("nhacid") String nhacid){
-        return  nhacservice.getnhac(nhacid);
-
-    }
-    @PutMapping("/{nhacid}")
-    nhac updatenhac(@PathVariable String nhacid, @RequestBody nhacupdaterequest request){
-    return  nhacservice.updatenhac(nhacid,request);
+    public List<nhac> getnhac() {
+        return nhacservice.getNhacList();
     }
 
-    @DeleteMapping("/{nhacid}")
-    String deletenhac(@PathVariable String nhacid){
-        nhacservice.deletenhac(nhacid);
-        return "nhac da xoa";
+    @GetMapping("/{nhacId}")
+    public nhac getNhacById(@PathVariable("nhacId") String nhacId) {
+        return nhacservice.getNhacById(nhacId);
+    }
+
+    @PutMapping("/{nhacId}")
+    public nhac updateNhac(@PathVariable("nhacId") String nhacId,
+                           @RequestBody nhacupdaterequest request) {
+        return nhacservice.updateNhac(nhacId, request);
+    }
+
+    @DeleteMapping("/{nhacId}")
+    public String deleteNhac(@PathVariable("nhacId") String nhacId) {
+        nhacservice.deleteNhac(nhacId);
+        return "Nhac with id " + nhacId + " has been deleted";
     }
 }
