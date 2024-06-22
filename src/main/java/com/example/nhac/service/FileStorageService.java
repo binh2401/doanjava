@@ -11,11 +11,11 @@ import java.util.UUID;
 
 @Service
 public class FileStorageService {
-    private final String storageDirectory = "static/uploads"; // Thay đổi đường dẫn lưu trữ
+    private final Path storageDirectory = Paths.get("src/main/resources/static/uploads");
 
     public String saveFile(MultipartFile file) throws IOException {
         String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-        Path filePath = Paths.get(storageDirectory, fileName);
+        Path filePath = storageDirectory.resolve(fileName);  // Sử dụng resolve thay vì Paths.get
         Files.createDirectories(filePath.getParent());
         Files.write(filePath, file.getBytes());
         return "/uploads/" + fileName; // Trả về đường dẫn tương đối
