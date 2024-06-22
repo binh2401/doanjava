@@ -5,6 +5,10 @@ import com.example.nhac.dbo.request.nhaccreaterequest;
 import com.example.nhac.dbo.request.nhacupdaterequest;
 import com.example.nhac.service.nhacservice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,32 +18,41 @@ import java.util.List;
 @RequestMapping("/api/nhac")
 public class nhaccontroller {
     @Autowired
-    private nhacservice nhacservice;
-
-    @PostMapping("/add")
-    public nhac createnhac(@ModelAttribute nhaccreaterequest request) {
-        return nhacservice.createNhac(request);
-    }
+    private nhacservice nhacService;
 
     @GetMapping
-    public List<nhac> getnhac() {
-        return nhacservice.getNhacList();
+    public List<nhac> getAllNhac() {
+        return nhacService.getNhacList();
     }
 
     @GetMapping("/{nhacId}")
-    public nhac getNhacById(@PathVariable("nhacId") String nhacId) {
-        return nhacservice.getNhacById(nhacId);
+    public nhac getNhacById(@PathVariable String nhacId) {
+        return nhacService.getNhacById(nhacId);
     }
 
-    @PutMapping("/{nhacId}")
-    public nhac updateNhac(@PathVariable("nhacId") String nhacId,
-                           @RequestBody nhacupdaterequest request) {
-        return nhacservice.updateNhac(nhacId, request);
+    @PostMapping("/add")
+    public nhac createNhac(@ModelAttribute nhaccreaterequest request) {
+        return nhacService.createNhac(request);
     }
 
-    @DeleteMapping("/{nhacId}")
-    public String deleteNhac(@PathVariable("nhacId") String nhacId) {
-        nhacservice.deleteNhac(nhacId);
-        return "Nhac with id " + nhacId + " has been deleted";
+    @PutMapping("/update/{nhacId}")
+    public nhac updateNhac(@PathVariable String nhacId, @ModelAttribute nhacupdaterequest request) {
+        return nhacService.updateNhac(nhacId, request);
+    }
+
+    @DeleteMapping("/delete/{nhacId}")
+    public void deleteNhac(@PathVariable String nhacId) {
+        nhacService.deleteNhac(nhacId);
+    }
+
+    @GetMapping("/audio/{nhacId}")
+    public ResponseEntity<Resource> getAudioFile(@PathVariable String nhacId) {
+        nhac nhac = nhacService.getNhacById(nhacId);
+        String audioFilePath = nhac.getAudioPath();  // Sử dụng filePath thay vì audioPath
+
+        Resource audioFile = nhacService.loadAudioFile(audioFilePath);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + audioFile.getFilename() + "\"")
+                .body(audioFile);
     }
 }

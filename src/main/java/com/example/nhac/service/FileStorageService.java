@@ -18,6 +18,6 @@ public class FileStorageService {
         Path filePath = Paths.get(storageDirectory, fileName);
         Files.createDirectories(filePath.getParent());
         Files.write(filePath, file.getBytes());
-        return "/uploads/" + fileName; // Trả về đường dẫn tương đối
+        return "uploads/" + fileName; // Trả về đường dẫn tương đối
     }
 }

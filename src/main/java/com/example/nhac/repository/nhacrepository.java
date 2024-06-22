@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface nhacrepository extends JpaRepository<nhac, String> {
+
 }

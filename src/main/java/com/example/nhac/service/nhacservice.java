@@ -5,6 +5,7 @@ import com.example.nhac.dbo.request.nhaccreaterequest;
 import com.example.nhac.dbo.request.nhacupdaterequest;
 import com.example.nhac.repository.nhacrepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class nhacservice {
     private nhacrepository nhacrepository;
 
     @Autowired
-    private FileStorageService fileStorageService;  // Assuming you have a FileStorageService for saving files
+    private FileStorageService fileStorageService;
 
     public nhac createNhac(nhaccreaterequest request) {
         nhac Nhac = new nhac();
@@ -92,19 +93,18 @@ public class nhacservice {
         nhacrepository.deleteById(nhacId);
     }
 
-    public org.springframework.core.io.Resource loadAudioFile(String audioFilePath) {
+    public Resource loadAudioFile(String audioFilePath) {
         try {
-            Path audioPath = Paths.get(audioFilePath);
-            Resource resource = new UrlResource(audioPath.toUri());
-
-            if (!resource.exists() || !resource.isReadable()) {
-                throw new RuntimeException("Could not read the audio file");
+            Path file = Paths.get(audioFilePath);
+            Resource resource = new FileSystemResource(file);
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            } else {
+                throw new RuntimeException("Could not read file: " + audioFilePath);
             }
-
-            return resource;
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Malformed URL exception: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load file: " + audioFilePath, e);
         }
     }
-
 }
+
