@@ -4,14 +4,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nhac List</title>
-    <style>
-        /* Optional: CSS để tạo định dạng cho danh sách */
-        .nhac-item {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
+    <script>
+        document.addEventListener('DOMContentLoaded', fetchNhacList);
+
+        async function addNhac() {
+            const ten = document.getElementById('ten').value;
+            const tacgia = document.getElementById('tacgia').value;
+            const theloai = document.getElementById('theloai').value;
+            const audioFile = document.getElementById('audioFile').files[0];
+            const imageFile = document.getElementById('imageFile').files[0];
+
+            const formData = new FormData();
+            formData.append('ten', ten);
+            formData.append('tacgia', tacgia);
+            formData.append('theloai', theloai);
+            formData.append('audioFile', audioFile);
+            formData.append('imageFile', imageFile);
+
+            try {
+                const response = await fetch('/api/nhac/add', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Thêm nhạc không thành công.');
+                }
+
+                fetchNhacList(); // Cập nhật danh sách nhạc sau khi thêm thành công
+                document.getElementById('addNhacForm').reset(); // Xóa các trường nhập liệu
+            } catch (error) {
+                console.error('Lỗi khi thêm nhạc:', error);
+                alert('Thêm nhạc không thành công.');
+            }
         }
-    </style>
+
+        async function fetchNhacList() {
+            try {
+                const response = await fetch('/api/nhac');
+                if (!response.ok) {
+                    throw new Error('Không thể lấy danh sách nhạc.');
+                }
+                const nhacList = await response.json();
+                const nhacContainer = document.getElementById('nhacContainer');
+                nhacContainer.innerHTML = ''; // Clear previous content
+
+                nhacList.forEach(nhac => {
+                    const nhacElement = document.createElement('div');
+                    nhacElement.innerHTML = `
+                        <p>Tên: ${nhac.ten}</p>
+                        <p>Tác giả: ${nhac.tacgia}</p>
+                        <p>Thể loại: ${nhac.theloai}</p>
+                        <img src="${nhac.imagePath}" alt="${nhac.ten}" width="100">
+                        <audio id="audio-${nhac.id}" controls>
+                            <source src="${nhac.audioPath}" type="audio/mp3">
+                            Your browser does not support the audio element.
+                        </audio>
+                        <button onclick="deleteNhac('${nhac.id}')">Xóa</button>
+                        <button onclick="playAudio('${nhac.id}')">Phát</button>
+                    `;
+                    nhacContainer.appendChild(nhacElement);
+                });
+            } catch (error) {
+                console.error('Lỗi khi lấy danh sách nhạc:', error);
+                alert('Không thể lấy danh sách nhạc.');
+            }
+        }
+
+        async function deleteNhac(nhacId) {
+            const confirmDelete = confirm('Bạn có chắc muốn xóa nhạc này?');
+            if (confirmDelete) {
+                try {
+                    const response = await fetch(`/api/nhac/delete/${nhacId}`, {
+                        method: 'DELETE'
+                    });
+                    if (!response.ok) {
+                        throw new Error('Xóa nhạc không thành công.');
+                    }
+                    fetchNhacList(); // Refresh the list after deletion
+                } catch (error) {
+                    console.error('Lỗi khi xóa nhạc:', error);
+                    alert('Xóa nhạc không thành công.');
+                }
+            }
+        }
+    </script>
 </head>
 <body>
 <h1>Nhac List</h1>
@@ -31,71 +108,12 @@
     <label for="audioFile">File âm thanh:</label><br>
     <input type="file" id="audioFile" name="audioFile" accept="audio/*" required><br><br>
 
+    <label for="imageFile">File hình ảnh:</label><br>
+    <input type="file" id="imageFile" name="imageFile" accept="image/*" required><br><br>
+
     <button type="button" onclick="addNhac()">Thêm</button>
 </form>
 
-<script>
-    // Hàm xử lý khi trang web được tải
-    document.addEventListener('DOMContentLoaded', fetchNhacList);
-
-    // Hàm gửi yêu cầu thêm nhạc mới
-    async function addNhac() {
-        const ten = document.getElementById('ten').value;
-        const tacgia = document.getElementById('tacgia').value;
-        const theloai = document.getElementById('theloai').value;
-        const audioFile = document.getElementById('audioFile').files[0];
-
-        const formData = new FormData();
-        formData.append('ten', ten);
-        formData.append('tacgia', tacgia);
-        formData.append('theloai', theloai);
-        formData.append('audioFile', audioFile);
-
-        try {
-            const response = await fetch('/api/nhac/add', {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!response.ok) {
-                throw new Error('Thêm nhạc không thành công.');
-            }
-
-            fetchNhacList(); // Cập nhật danh sách nhạc sau khi thêm thành công
-            document.getElementById('addNhacForm').reset(); // Xóa các trường nhập liệu
-        } catch (error) {
-            console.error('Lỗi khi thêm nhạc:', error);
-            alert('Thêm nhạc không thành công.');
-        }
-    }
-
-    // Hàm lấy danh sách nhạc từ server và hiển thị lên giao diện
-    async function fetchNhacList() {
-        try {
-            const response = await fetch('/api/nhac');
-            const nhacList = await response.json();
-            const nhacContainer = document.getElementById('nhacContainer');
-            nhacContainer.innerHTML = ''; // Xóa nội dung cũ đi
-
-            nhacList.forEach(nhac => {
-                const nhacElement = document.createElement('div');
-                nhacElement.classList.add('nhac-item');
-                nhacElement.innerHTML = `
-                    <p>Tên: ${nhac.ten}</p>
-                    <p>Tác giả: ${nhac.tacgia}</p>
-                    <p>Thể loại: ${nhac.theloai}</p>
-                    <audio controls>
-                        <source src="${nhac.audioPath}" type="audio/mp3">
-                        Your browser does not support the audio element.
-                    </audio>
-                `;
-                nhacContainer.appendChild(nhacElement);
-            });
-        } catch (error) {
-            console.error('Lỗi khi lấy danh sách nhạc:', error);
-            alert('Không thể lấy danh sách nhạc.');
-        }
-    }
-</script>
+<div id="audioContainer"></div>
 </body>
 </html>

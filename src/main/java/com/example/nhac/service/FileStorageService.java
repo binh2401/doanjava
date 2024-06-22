@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Service
 public class FileStorageService {
-    private final String storageDirectory = "uploads"; // Thay đổi đường dẫn lưu trữ
+    private final String storageDirectory = "static/uploads"; // Thay đổi đường dẫn lưu trữ
 
     public String saveFile(MultipartFile file) throws IOException {
         String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
