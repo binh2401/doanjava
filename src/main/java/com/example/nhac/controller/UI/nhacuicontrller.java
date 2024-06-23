@@ -11,4 +11,12 @@ public class nhacuicontrller {
     public String Index(){
         return  "nhac/nhac-list";
     }
+    @GetMapping("/add")
+    public String add(){
+        return "nhac/add-nhac";
+    }
+    @GetMapping("/sua")
+    public String sua(){
+        return "nhac/nhac-sua";
+    }
 }

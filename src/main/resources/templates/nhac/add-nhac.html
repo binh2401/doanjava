@@ -1,29 +1,65 @@
-<!-- src/main/resources/templates/add-nhac.html -->
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Add Nhac</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Nhạc</title>
+    <script>
+        async function addNhac() {
+            const ten = document.getElementById('ten').value;
+            const tacgia = document.getElementById('tacgia').value;
+            const theloai = document.getElementById('theloai').value;
+            const audioFile = document.getElementById('audioFile').files[0];
+            const imageFile = document.getElementById('imageFile').files[0];
+
+            const formData = new FormData();
+            formData.append('ten', ten);
+            formData.append('tacgia', tacgia);
+            formData.append('theloai', theloai);
+            formData.append('audioFile', audioFile);
+            formData.append('imageFile', imageFile);
+
+            try {
+                const response = await fetch('/api/nhac/add', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Thêm nhạc không thành công.');
+                }
+
+                alert('Thêm nhạc thành công!');
+                document.getElementById('addNhacForm').reset(); // Clear input fields
+            } catch (error) {
+                console.error('Lỗi khi thêm nhạc:', error);
+                alert('Thêm nhạc không thành công.');
+            }
+        }
+    </script>
 </head>
 <body>
-<h1>Add New Nhac</h1>
-<form action="/nhac-ui/add" method="post">
-    <label for="ten">Tên nhạc:</label>
-    <input type="text" id="ten" name="ten" th:value="${nhac.ten}">
+<th:block th:replace="Layout::header"></th:block>
+<h1>Thêm Nhạc Mới</h1>
+<form id="addNhacForm" enctype="multipart/form-data">
+    <label for="ten">Tên nhạc:</label><br>
+    <input type="text" id="ten" name="ten" required><br><br>
 
-    <label for="tacgia">Tác giả:</label>
-    <input type="text" id="tacgia" name="tacgia" th:value="${nhac.tacgia}">
+    <label for="tacgia">Tác giả:</label><br>
+    <input type="text" id="tacgia" name="tacgia" required><br><br>
 
-    <label for="theloai">Thể loại:</label>
-    <input type="text" id="theloai" name="theloai" th:value="${nhac.theloai}">
+    <label for="theloai">Thể loại:</label><br>
+    <input type="text" id="theloai" name="theloai" required><br><br>
 
-    <button type="submit">Thêm nhạc</button>
+    <label for="audioFile">File âm thanh:</label><br>
+    <input type="file" id="audioFile" name="audioFile" accept="audio/*" required><br><br>
+
+    <label for="imageFile">File hình ảnh:</label><br>
+    <input type="file" id="imageFile" name="imageFile" accept="image/*" required><br><br>
+
+    <button type="button" onclick="addNhac()">Thêm</button>
 </form>
-
-<!-- Thêm phần hiển thị thông báo -->
-<div th:if="${param.message}">
-    <p th:text="${param.message}"></p>
-</div>
-
+<br>
+<a href="/">Trở lại danh sách nhạc</a>
 </body>
 </html>
