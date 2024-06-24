@@ -12,6 +12,7 @@ public class user {
     private String id;
     private  String username;
     private  String pass;
+    private  String name;
 
 
     public String getPass() {
@@ -36,5 +37,13 @@ public class user {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

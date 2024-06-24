@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm người dùng</title>
+</head>
+<body>
+<h1>Thêm người dùng</h1>
+<form id="addUserForm">
+    <label for="username">Tên người dùng:</label>
+    <input type="text" id="username" name="username"><br>
+    <label for="pass">Mật khẩu:</label>
+    <input type="password" id="pass" name="pass"><br>
+    <label for="name">Tên:</label>
+    <input type="text" id="name" name="name"><br>
+    <button type="submit">Thêm người dùng</button>
+</form>
+
+<script>
+    document.getElementById('addUserForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const username = document.getElementById('username').value;
+        const pass = document.getElementById('pass').value;
+        const name = document.getElementById('name').value;
+
+        const userData = {
+            username: username,
+            pass: pass,
+            name: name
+        };
+
+        fetch('/api/user/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert('Người dùng đã được thêm thành công');
+            // Chuyển hướng hoặc làm trống form nếu cần
+        })
+        .catch(error => {
+            console.error('Lỗi:', error);
+        });
+    });
+</script>
+</body>
+</html>

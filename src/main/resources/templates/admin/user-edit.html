@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cập nhật người dùng</title>
+</head>
+<body>
+<h1>Cập nhật người dùng</h1>
+<form id="updateUserForm">
+    <label for="userId">ID Người dùng:</label>
+    <input type="text" id="userId" name="userId" readonly><br>
+    <label for="username">Tên người dùng:</label>
+    <input type="text" id="username" name="username"><br>
+    <label for="pass">Mật khẩu:</label>
+    <input type="password" id="pass" name="pass"><br>
+    <label for="name">Tên:</label>
+    <input type="text" id="name" name="name"><br>
+    <button type="submit">Cập nhật người dùng</button>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const params = new URLSearchParams(window.location.search);
+        const userId = params.get('id');
+
+        if (userId) {
+            fetch(`/api/user/${userId}`)
+                .then(response => response.json())
+                .then(user => {
+                    document.getElementById('userId').value = user.id;
+                    document.getElementById('username').value = user.username;
+                    document.getElementById('pass').value = user.pass;
+                    document.getElementById('name').value = user.name;
+                })
+                .catch(error => console.error('Lỗi khi lấy người dùng:', error));
+        }
+    });
+
+    document.getElementById('updateUserForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const id = document.getElementById('userId').value;
+        const username = document.getElementById('username').value;
+        const pass = document.getElementById('pass').value;
+        const name = document.getElementById('name').value;
+
+        fetch(`/api/user/update/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, pass, name })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Người dùng đã được cập nhật thành công');
+            // Chuyển hướng hoặc làm trống form nếu cần
+        })
+        .catch(error => {
+            console.error('Lỗi:', error);
+        });
+    });
+</script>
+</body>
+</html>
