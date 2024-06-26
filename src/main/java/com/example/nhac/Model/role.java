@@ -1,35 +1,33 @@
 package com.example.nhac.Model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+import java.util.UUID;
+
+@Entity
 public class role {
-    public static final String USER = "USER";
-    public static final String ADMIN = "ADMIN";
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-    private String user = USER;
-    private String admin = ADMIN;
+    private String name;
 
-    public role() {
+    public UUID getId() {
+        return id;
     }
 
-    public role(String user, String admin) {
-        this.user = user;
-        this.admin = admin;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
-    public String getUser() {
-        return user;
+    public String getName() {
+        return name;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setName(String name) {
+        this.name = name;
     }
-
-    public String getAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(String admin) {
-        this.admin = admin;
-    }
-
-
 }
