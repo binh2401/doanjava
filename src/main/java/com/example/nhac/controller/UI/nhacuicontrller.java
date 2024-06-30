@@ -19,4 +19,9 @@ public class nhacuicontrller {
     public String sua(){
         return "nhac/nhac-sua";
     }
+    @GetMapping("/dk")
+    public String dk(){
+        return "dangnhap";
+    }
+
 }

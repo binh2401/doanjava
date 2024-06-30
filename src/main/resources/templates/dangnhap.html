@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký và Đăng nhập</title>
+    <script>
+        async function registerUser(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+            const email = document.getElementById('register-email').value;
+            const phone = document.getElementById('register-phone').value;
+
+            const response = await fetch('/api/user/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, pass: password, email, phone })
+            });
+
+            const data = await response.json();
+            const messageElement = document.getElementById('register-message');
+
+            if (response.ok) {
+                messageElement.style.color = 'green';
+                messageElement.textContent = data.message || 'User registered successfully!';
+            } else {
+                messageElement.style.color = 'red';
+                messageElement.textContent = data.message || 'Failed to register user: ' + (data.error || '');
+            }
+        }
+
+        async function loginUser(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            const response = await fetch('/api/user/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, pass: password })
+            });
+
+            const data = await response.json();
+            const messageElement = document.getElementById('login-message');
+
+            if (response.ok) {
+                messageElement.style.color = 'green';
+                messageElement.textContent = data.message || 'Login successful!';
+            } else {
+                messageElement.style.color = 'red';
+                messageElement.textContent = data.message || 'Failed to login: ' + (data.error || '');
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>Đăng ký</h1>
+<form id="register-form" onsubmit="registerUser(event)">
+    <label for="register-username">Tên đăng nhập:</label>
+    <input type="text" id="register-username" name="username" required>
+    <br>
+    <label for="register-password">Mật khẩu:</label>
+    <input type="password" id="register-password" name="password" required>
+    <br>
+    <label for="register-email">Email:</label>
+    <input type="email" id="register-email" name="email" required>
+    <br>
+    <label for="register-phone">Số điện thoại:</label>
+    <input type="tel" id="register-phone" name="phone" required>
+    <br>
+    <button type="submit">Đăng ký</button>
+</form>
+<p id="register-message"></p>
+
+<h1>Đăng nhập</h1>
+<form id="login-form" onsubmit="loginUser(event)">
+    <label for="login-username">Tên đăng nhập:</label>
+    <input type="text" id="login-username" name="username" required>
+    <br>
+    <label for="login-password">Mật khẩu:</label>
+    <input type="password" id="login-password" name="password" required>
+    <br>
+    <button type="submit">Đăng nhập</button>
+</form>
+<p id="login-message"></p>
+</body>
+</html>

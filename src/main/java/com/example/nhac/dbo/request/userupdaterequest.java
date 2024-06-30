@@ -4,7 +4,7 @@ public class userupdaterequest {
     private  String username;
     private  String pass;
     private  String name;
-
+    private String phone;
     public String getUsername() {
         return username;
     }
@@ -27,5 +27,13 @@ public class userupdaterequest {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

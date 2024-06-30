@@ -1,33 +1,54 @@
 package com.example.nhac.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.*;
+import org.hibernate.Hibernate;
+import org.springframework.security.core.GrantedAuthority;
 
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
-public class role {
+@Table(name = "role")
+public class role  implements GrantedAuthority {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @NotBlank(message = "Name is required")
+    @Column(name = "name", length = 50, nullable = false)
+    @Size(max = 50, message = "Name must be less than 50 characters")
     private String name;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
+    @Size(max = 250, message = "Description must be less than 250 characters")
+    @Column(name = "description", length = 250)
+    private String description;
+    @ManyToMany(mappedBy = "roles", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private Set<user> users = new HashSet<>();
+    @Override
+    public String getAuthority() {
         return name;
     }
-
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return
+                false;
+        role role = (role) o;
+        return getId() != null && Objects.equals(getId(), role.getId());
     }
-}
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+    }
+
