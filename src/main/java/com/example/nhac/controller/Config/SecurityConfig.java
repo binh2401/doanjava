@@ -43,6 +43,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Vô hiệu hóa CSRF
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/add").hasAnyRole("admin")
                         .anyRequest().permitAll() // Cho phép tất cả các yêu cầu mà không cần xác thực
                 )
                 .httpBasic(httpBasic -> httpBasic

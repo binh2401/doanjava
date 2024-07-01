@@ -23,5 +23,10 @@ public class nhacuicontrller {
     public String dk(){
         return "dangnhap";
     }
+    @GetMapping("/dn")
+    public String dn(){
+        return "login";
+    }
+
 
 }

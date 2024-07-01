@@ -2,11 +2,14 @@ package com.example.nhac.dbo.request;
 
 public class usercreaterequest {
     private String id;
-    private  String username;
-    private  String pass;
-    private  String name;
- private  String email;
- private String phone;
+    private String username;
+    private String pass;
+    private String name;
+    private String email;
+    private String phone;
+
+    // Các getter và setter cho từng thuộc tính
+
     public String getId() {
         return id;
     }

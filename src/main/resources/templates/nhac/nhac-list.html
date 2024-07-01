@@ -48,6 +48,7 @@
     </style>
 </head>
 <body>
+
 <th:block th:replace="Layout::header"></th:block>
 <a href="/add">Thêm nhạc mới</a>
 <div class="container">
@@ -57,8 +58,13 @@
     </div>
 </div>
 
+<p id="loggedInUser"></p>
+
 <script>
-    document.addEventListener('DOMContentLoaded', fetchNhacList);
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchNhacList();
+        fetchLoggedInUser();
+    });
 
     async function fetchNhacList() {
         try {
@@ -138,6 +144,31 @@
             alert('Không thể lấy thông tin nhạc.');
         }
     }
+
+    async function fetchLoggedInUser() {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('Token không tồn tại.');
+            }
+            const response = await fetch('/api/user/{username}', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Không thể lấy thông tin người dùng.');
+            }
+            const user = await response.json();
+            const loggedInUserElement = document.getElementById('loggedInUser');
+            loggedInUserElement.textContent = `Đang đăng nhập: ${user.username}`;
+            loggedInUserElement.style.display = 'block';
+        } catch (error) {
+            console.error('Lỗi khi lấy thông tin người dùng:', error);
+            alert('Không thể lấy thông tin người dùng.');
+        }
+    }
+
 </script>
 
 </body>

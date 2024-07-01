@@ -23,7 +23,7 @@ import java.util.Optional;
 @Transactional
 public class uerservice  implements UserDetailsService {
     @Autowired
-    private userrepository  userrepository;
+    private userrepository userrepository;
     @Autowired
     private rolerepository rolerepository;
 
@@ -31,6 +31,7 @@ public class uerservice  implements UserDetailsService {
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         userrepository.save(user);
     }
+
     // Gán vai trò mặc định cho người dùng dựa trên tên người dùng.
     public void setDefaultRole(String username) {
         userrepository.findByUsername(username).ifPresentOrElse(
@@ -38,10 +39,13 @@ public class uerservice  implements UserDetailsService {
                     user.getRoles().add(rolerepository.findRoleById(role.USER.value));
                     userrepository.save(user);
                 },
-                () -> { throw new UsernameNotFoundException("User not found"); }
+                () -> {
+                    throw new UsernameNotFoundException("User not found");
+                }
         );
 
     }
+
     // Tải thông tin chi tiết người dùng để xác thực.
     @Override
     public UserDetails loadUserByUsername(String username) throws
@@ -58,9 +62,23 @@ public class uerservice  implements UserDetailsService {
                 .disabled(!user.isEnabled())
                 .build();
     }
+
     // Tìm kiếm người dùng dựa trên tên đăng nhập.
     public Optional<user> findByUsername(String username) throws
             UsernameNotFoundException {
         return userrepository.findByUsername(username);
+    }
+
+    public Optional<user> login(String username, String password) {
+        Optional<user> userOptional = userrepository.findByUsername(username);
+        if (userOptional.isPresent()) {
+            user user = userOptional.get();
+            // Kiểm tra mật khẩu đã mã hóa
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                return userOptional;
+            }
+        }
+        return Optional.empty();
     }
 }

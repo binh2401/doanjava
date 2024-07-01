@@ -33,31 +33,7 @@
             }
         }
 
-        async function loginUser(event) {
-            event.preventDefault();
 
-            const username = document.getElementById('login-username').value;
-            const password = document.getElementById('login-password').value;
-
-            const response = await fetch('/api/user/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, pass: password })
-            });
-
-            const data = await response.json();
-            const messageElement = document.getElementById('login-message');
-
-            if (response.ok) {
-                messageElement.style.color = 'green';
-                messageElement.textContent = data.message || 'Login successful!';
-            } else {
-                messageElement.style.color = 'red';
-                messageElement.textContent = data.message || 'Failed to login: ' + (data.error || '');
-            }
-        }
     </script>
 </head>
 <body>
@@ -79,16 +55,7 @@
 </form>
 <p id="register-message"></p>
 
-<h1>Đăng nhập</h1>
-<form id="login-form" onsubmit="loginUser(event)">
-    <label for="login-username">Tên đăng nhập:</label>
-    <input type="text" id="login-username" name="username" required>
-    <br>
-    <label for="login-password">Mật khẩu:</label>
-    <input type="password" id="login-password" name="password" required>
-    <br>
-    <button type="submit">Đăng nhập</button>
-</form>
-<p id="login-message"></p>
+
+
 </body>
 </html>

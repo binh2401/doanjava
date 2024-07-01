@@ -5,9 +5,30 @@
     <title>Title</title>
 </head>
 <body>
+<div id="user-details">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username">
+    <button onclick="getUserDetails()">Get Details</button>
+</div>
 <div  th:fragment="header">
   <h1> nghe nhac 24 h</h1>
 
 </div>
+<script> async function getUserDetails() {
+            const username = document.getElementById('username').value;
+            const url = `/api/users/${username}`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                document.getElementById('result').innerHTML = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('result').innerHTML = `Error fetching user details: ${error.message}`;
+            }
+        }
+</script>
 </body>
 </html>
