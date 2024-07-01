@@ -43,13 +43,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Vô hiệu hóa CSRF
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/add").hasAnyRole("admin")
+//                        .requestMatchers("/add").hasAnyRole("admin")
                         .anyRequest().permitAll() // Cho phép tất cả các yêu cầu mà không cần xác thực
                 )
                 .httpBasic(httpBasic -> httpBasic
                         .realmName("nhac") // Tên miền cho xác thực cơ bản.
-                )
-                .formLogin(formLogin -> formLogin.disable()); // Vô hiệu hóa form đăng nhập
+                );
 
         return http.build(); // Xây dựng và trả về chuỗi lọc bảo mật.
     }

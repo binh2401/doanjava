@@ -5,37 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thêm Nhạc</title>
     <script>
-        async function addNhac() {
-            const ten = document.getElementById('ten').value;
-            const tacgia = document.getElementById('tacgia').value;
-            const theloai = document.getElementById('theloai').value;
-            const audioFile = document.getElementById('audioFile').files[0];
-            const imageFile = document.getElementById('imageFile').files[0];
+        async function fetchLoggedInUser() {
+      try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+              throw new Error('Token không tồn tại.');
+          }
+          const response = await fetch('/api/user/{username}', {
+              headers: {
+                  'Authorization': `Bearer ${token}`
+              }
+          });
+          if (!response.ok) {
+              throw new Error('Không thể lấy thông tin người dùng.');
+          }
+          const user = await response.json();
+          const loggedInUserElement = document.getElementById('loggedInUser');
+          loggedInUserElement.textContent = `Đang đăng nhập: ${user.username}`;
+          loggedInUserElement.style.display = 'block';
+      } catch (error) {
+          console.error('Lỗi khi lấy thông tin người dùng:', error);
+          alert('Không thể lấy thông tin người dùng.');
+      }
+  }
 
-            const formData = new FormData();
-            formData.append('ten', ten);
-            formData.append('tacgia', tacgia);
-            formData.append('theloai', theloai);
-            formData.append('audioFile', audioFile);
-            formData.append('imageFile', imageFile);
+      async function addNhac() {
+          const ten = document.getElementById('ten').value;
+          const tacgia = document.getElementById('tacgia').value;
+          const theloai = document.getElementById('theloai').value;
+          const audioFile = document.getElementById('audioFile').files[0];
+          const imageFile = document.getElementById('imageFile').files[0];
 
-            try {
-                const response = await fetch('/api/nhac/add', {
-                    method: 'POST',
-                    body: formData
-                });
+          const formData = new FormData();
+          formData.append('ten', ten);
+          formData.append('tacgia', tacgia);
+          formData.append('theloai', theloai);
+          formData.append('audioFile', audioFile);
+          formData.append('imageFile', imageFile);
 
-                if (!response.ok) {
-                    throw new Error('Thêm nhạc không thành công.');
-                }
+          try {
+              const response = await fetch('/api/nhac/add', {
+                  method: 'POST',
+                  body: formData
+              });
 
-                alert('Thêm nhạc thành công!');
-                document.getElementById('addNhacForm').reset(); // Clear input fields
-            } catch (error) {
-                console.error('Lỗi khi thêm nhạc:', error);
-                alert('Thêm nhạc không thành công.');
-            }
-        }
+              if (!response.ok) {
+                  throw new Error('Thêm nhạc không thành công.');
+              }
+
+              alert('Thêm nhạc thành công!');
+              document.getElementById('addNhacForm').reset(); // Clear input fields
+          } catch (error) {
+              console.error('Lỗi khi thêm nhạc:', error);
+              alert('Thêm nhạc không thành công.');
+          }
+      }
     </script>
 </head>
 <body>

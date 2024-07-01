@@ -36,16 +36,19 @@ public class uerservice  implements UserDetailsService {
     public void setDefaultRole(String username) {
         userrepository.findByUsername(username).ifPresentOrElse(
                 user -> {
-                    user.getRoles().add(rolerepository.findRoleById(role.USER.value));
+                    // Kiểm tra nếu tên người dùng là "admin", gán vai trò "ADMIN", ngược lại gán vai trò "USER".
+                    if (username.equals("admin")) {
+                        user.getRoles().add(rolerepository.findRoleById(role.ADMIN.value));
+                    } else {
+                        user.getRoles().add(rolerepository.findRoleById(role.USER.value));
+                    }
                     userrepository.save(user);
                 },
                 () -> {
                     throw new UsernameNotFoundException("User not found");
                 }
         );
-
     }
-
     // Tải thông tin chi tiết người dùng để xác thực.
     @Override
     public UserDetails loadUserByUsername(String username) throws
