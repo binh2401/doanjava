@@ -11,10 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -98,6 +100,36 @@ public class usercontroller {
             } else {
                 return ResponseEntity.notFound().build();
             }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Không thể xác thực người dùng");
+        }
+    }
+    @Autowired
+    private uerservice userService;
+
+    @GetMapping("/user-list")
+    public ResponseEntity<List<user>> userList() {
+        List<user> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
+    @DeleteMapping("/{username}")
+    public ResponseEntity<?> deleteUser(@PathVariable String username, HttpServletRequest request) {
+        try {
+            // Lấy token từ header Authorization và xác thực người dùng
+            String token = request.getHeader("Authorization");
+            if (token != null && token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            } else {
+                throw new IllegalArgumentException("Token không hợp lệ");
+            }
+
+            String authenticatedUsername = jwtUtil.getUsernameFromToken(token);
+            if (authenticatedUsername == null || !authenticatedUsername.equals(username)) {
+                throw new IllegalArgumentException("Không có quyền xoá người dùng này");
+            }
+
+            // Gọi phương thức xoá người dùng từ service
+            return uerservice.deleteUser(username);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Không thể xác thực người dùng");
         }

@@ -1,0 +1,47 @@
+<!-- Details Portion -->
+<div>
+    <p>Track Number: <span id="track-number"></span></p>
+    <p>Track Album: <span id="track-album"></span></p>
+    <p>Track Name: <span id="track-name"></span></p>
+    <p>Track Artist: <span id="track-artist"></span></p>
+</div>
+
+<!-- Buttons Portion -->
+<div>
+    <button id="play-pause-button">Play/Pause</button>
+    <button id="previous-button">Previous</button>
+    <button id="next-button">Next</button>
+</div>
+
+<!-- Audio element -->
+<audio id="audio-element" src=""></audio>
+<script>
+    const audioElement = document.getElementById('audio-element');
+const playPauseButton = document.getElementById('play-pause-button');
+const previousButton = document.getElementById('previous-button');
+const nextButton = document.getElementById('next-button');
+
+// Add event listeners to buttons
+playPauseButton.addEventListener('click', playPauseTrack);
+previousButton.addEventListener('click', previousTrack);
+nextButton.addEventListener('click', nextTrack);
+
+// Function to play/pause track
+function playPauseTrack() {
+  if (audioElement.paused) {
+    audioElement.play();
+  } else {
+    audioElement.pause();
+  }
+}
+
+// Function to play previous track
+function previousTrack() {
+  // Implement logic to play previous track
+}
+
+// Function to play next track
+function nextTrack() {
+  // Implement logic to play next track
+}
+</script>
