@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -84,4 +85,17 @@ public class uerservice  implements UserDetailsService {
         }
         return Optional.empty();
     }
+    public List<user> getAllUsers() {
+        return userrepository.findAll();
+    }
+    public ResponseEntity<?> deleteUser(String username) {
+        Optional<user> optionalUser = userrepository.findByUsername(username);
+        if (optionalUser.isPresent()) {
+            userrepository.delete(optionalUser.get());
+            return ResponseEntity.ok("User deleted successfully");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

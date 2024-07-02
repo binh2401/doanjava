@@ -27,5 +27,10 @@ public class nhacuicontrller {
     public String dn(){
         return "login";
     }
+    @GetMapping("/play")
+    public String play(){
+        return "nhac/choinhac";
+    }
+
 
 }

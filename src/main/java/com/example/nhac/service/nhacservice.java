@@ -16,6 +16,8 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class nhacservice {
@@ -105,6 +107,16 @@ public class nhacservice {
         } catch (Exception e) {
             throw new RuntimeException("Could not load file: " + audioFilePath, e);
         }
+    }
+    // Chuyển danh sách nhạc thành danh sách nhạc ngẫu nhiên
+    public List<nhac> getRandomNhacList() {
+        List<nhac> allNhac = nhacrepository.findAll();
+        Random random = new Random();
+        return random.ints(0, allNhac.size())
+                .distinct()
+                .limit(5) // Số lượng nhạc ngẫu nhiên muốn lấy
+                .mapToObj(allNhac::get)
+                .collect(Collectors.toList());
     }
     // Phương thức tìm kiếm
     public List<nhac> searchNhacByTen(String ten) {
