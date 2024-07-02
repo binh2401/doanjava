@@ -50,11 +50,31 @@
 <body>
 
 <th:block th:replace="Layout::header"></th:block>
- <a  href="/add">Thêm nhạc mới</a>
+<a href="/add">Thêm nhạc mới</a>
 <div class="container">
     <h1 class="mt-4 mb-4">Danh sách nhạc</h1>
-    <div id="nhacContainer" class="row">
 
+    <!-- Search Form -->
+    <div class="mb-4">
+        <form id="searchForm" onsubmit="searchNhac(event)">
+            <div class="form-row">
+                <div class="col">
+                    <input type="text" id="searchTerm" placeholder="Tìm kiếm nhạc" class="form-control mb-2">
+                </div>
+                <div class="col">
+                    <input type="text" id="searchAuthor" placeholder="Tìm kiếm theo tác giả" class="form-control mb-2">
+                </div>
+                <div class="col">
+                    <input type="text" id="searchGenre" placeholder="Tìm kiếm theo thể loại" class="form-control mb-2">
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-primary mb-2">Tìm kiếm</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="nhacContainer" class="row">
     </div>
 </div>
 
@@ -73,17 +93,21 @@
                 throw new Error('Không thể lấy danh sách nhạc.');
             }
             const nhacList = await response.json();
-            const nhacContainer = document.getElementById('nhacContainer');
-            nhacContainer.innerHTML = ''; // Clear previous content
-
-            nhacList.forEach(nhac => {
-                const nhacElement = createNhacCard(nhac);
-                nhacContainer.appendChild(nhacElement);
-            });
+            displayNhacList(nhacList);
         } catch (error) {
             console.error('Lỗi khi lấy danh sách nhạc:', error);
             alert('Không thể lấy danh sách nhạc.');
         }
+    }
+
+    function displayNhacList(nhacList) {
+        const nhacContainer = document.getElementById('nhacContainer');
+        nhacContainer.innerHTML = ''; // Clear previous content
+
+        nhacList.forEach(nhac => {
+            const nhacElement = createNhacCard(nhac);
+            nhacContainer.appendChild(nhacElement);
+        });
     }
 
     function createNhacCard(nhac) {
@@ -169,6 +193,41 @@
         }
     }
 
+    async function searchNhac(event) {
+        event.preventDefault();
+        const searchTerm = document.getElementById('searchTerm').value.trim();
+        const searchAuthor = document.getElementById('searchAuthor').value.trim();
+        const searchGenre = document.getElementById('searchGenre').value.trim();
+
+        if (searchTerm === '' && searchAuthor === '' && searchGenre === '') {
+            // If all search terms are empty, fetch all music
+            fetchNhacList();
+            return;
+        }
+
+        try {
+            let query = '/api/nhac/search?';
+            if (searchTerm) {
+                query += `ten=${searchTerm}&`;
+            }
+            if (searchAuthor) {
+                query += `tacgia=${searchAuthor}&`;
+            }
+            if (searchGenre) {
+                query += `theloai=${searchGenre}`;
+            }
+
+            const response = await fetch(query);
+            if (!response.ok) {
+                throw new Error('Không thể tìm kiếm nhạc.');
+            }
+            const nhacList = await response.json();
+            displayNhacList(nhacList);
+        } catch (error) {
+            console.error('Lỗi khi tìm kiếm nhạc:', error);
+            alert('Không thể tìm kiếm nhạc.');
+        }
+    }
 </script>
 
 </body>

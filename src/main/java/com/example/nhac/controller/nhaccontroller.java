@@ -55,4 +55,24 @@ public class nhaccontroller {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + audioFile.getFilename() + "\"")
                 .body(audioFile);
     }
+    @GetMapping("/search/byTen")
+    public List<nhac> searchNhacByTen(@RequestParam String ten) {
+        return nhacService.searchNhacByTen(ten);
+    }
+
+    @GetMapping("/search/byTacgia")
+    public List<nhac> searchNhacByTacgia(@RequestParam String tacgia) {
+        return nhacService.searchNhacByTacgia(tacgia);
+    }
+
+    @GetMapping("/search/byTheloai")
+    public List<nhac> searchNhacByTheloai(@RequestParam String theloai) {
+        return nhacService.searchNhacByTheloai(theloai);
+    }
+    @GetMapping("/search")
+    public List<nhac> searchNhac(@RequestParam(required = false) String ten,
+                                 @RequestParam(required = false) String tacgia,
+                                 @RequestParam(required = false) String theloai) {
+        return nhacService.searchNhac(ten, tacgia, theloai);
+    }
 }

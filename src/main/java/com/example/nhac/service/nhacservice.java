@@ -106,6 +106,36 @@ public class nhacservice {
             throw new RuntimeException("Could not load file: " + audioFilePath, e);
         }
     }
+    // Phương thức tìm kiếm
+    public List<nhac> searchNhacByTen(String ten) {
+        return nhacrepository.findByTenContainingIgnoreCase(ten);
+    }
 
+    public List<nhac> searchNhacByTacgia(String tacgia) {
+        return nhacrepository.findByTacgiaContainingIgnoreCase(tacgia);
+    }
+
+    public List<nhac> searchNhacByTheloai(String theloai) {
+        return nhacrepository.findByTheloaiContainingIgnoreCase(theloai);
+    }
+    public List<nhac> searchNhac(String ten, String tacgia, String theloai) {
+        if (ten != null && tacgia != null && theloai != null) {
+            return nhacrepository.findByTenContainingAndTacgiaContainingAndTheloaiContaining(ten, tacgia, theloai);
+        } else if (ten != null && tacgia != null) {
+            return nhacrepository.findByTenContainingAndTacgiaContaining(ten, tacgia);
+        } else if (ten != null && theloai != null) {
+            return nhacrepository.findByTenContainingAndTheloaiContaining(ten, theloai);
+        } else if (tacgia != null && theloai != null) {
+            return nhacrepository.findByTacgiaContainingAndTheloaiContaining(tacgia, theloai);
+        } else if (ten != null) {
+            return nhacrepository.findByTenContaining(ten);
+        } else if (tacgia != null) {
+            return nhacrepository.findByTacgiaContaining(tacgia);
+        } else if (theloai != null) {
+            return nhacrepository.findByTheloaiContaining(theloai);
+        } else {
+            return getNhacList();
+        }
+    }
 }
 
