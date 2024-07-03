@@ -5,15 +5,102 @@
     <title>Title</title>
 </head>
 <body>
-<div id="user-details">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username">
-    <button onclick="getUserDetails()">Get Details</button>
+<!-- Preloader -->
+<div class="preloader d-flex align-items-center justify-content-center">
+    <div class="lds-ellipsis">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
 </div>
-<div  th:fragment="header">
-  <h1> nghe nhac 24 h</h1>
 
-</div>
+<header class="header-area"  th:fragment="header">
+    <!-- Navbar Area -->
+
+    <div class="oneMusic-main-menu">
+        <div class="classy-nav-container breakpoint-off">
+            <div class="container">
+                <!-- Menu -->
+                <nav class="classy-navbar justify-content-between" id="oneMusicNav">
+
+                    <!-- Nav brand -->
+                    <a href="index.html" class="nav-brand"><p>Nghe nhac 24h</p></a>
+
+                    <!-- Navbar Toggler -->
+                    <div class="classy-navbar-toggler">
+                        <span class="navbarToggler"><span></span><span></span><span></span></span>
+                    </div>
+
+                    <!-- Menu -->
+                    <div class="classy-menu">
+
+                        <!-- Close Button -->
+                        <div class="classycloseIcon">
+                            <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
+                        </div>
+
+                        <!-- Nav Start -->
+                        <div class="classynav">
+                            <ul>
+                                <li><a href="/">Home</a></li>
+                                <li><a href="#">Albums</a></li>
+                                <li><a href="#">Pages</a>
+                                    <ul class="dropdown">
+                                        <li><a href="#">Home</a></li>
+                                        <li><a href="#">Albums</a></li>
+                                        <li><a href="#">Events</a></li>
+                                        <li><a href="#">News</a></li>
+                                        <li><a href="#">Contact</a></li>
+                                        <li><a href="#">Elements</a></li>
+                                        <li><a href="#">Login</a></li>
+                                        <li><a href="#">Dropdown</a>
+                                            <ul class="dropdown">
+                                                <li><a href="#">Even Dropdown</a></li>
+                                                <li><a href="#">Even Dropdown</a></li>
+                                                <li><a href="#">Even Dropdown</a></li>
+                                                <li><a href="#">Even Dropdown</a>
+                                                    <ul class="dropdown">
+                                                        <li><a href="#">Deeply Dropdown</a></li>
+                                                        <li><a href="#">Deeply Dropdown</a></li>
+                                                        <li><a href="#">Deeply Dropdown</a></li>
+                                                        <li><a href="#">Deeply Dropdown</a></li>
+                                                        <li><a href="#">Deeply Dropdown</a></li>
+                                                    </ul>
+                                                </li>
+                                                <li><a href="#">Even Dropdown</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><a href="#">Events</a></li>
+                                <li><a href="#">News</a></li>
+                                <li><a href="#">Contact</a></li>
+                            </ul>
+
+                            <!-- Login/Register & Cart Button -->
+                            <div class="login-register-cart-button d-flex align-items-center">
+                                <!-- Login/Register -->
+                                <div class="login-register-btn mr-50">
+                                    <a href="/dn" id="loginBtn">Login</a>
+                                    <a href="/dk" id="registerBtn">Register</a>
+                                    <span id="loggedInUser" style="display:none;"></span>
+                                </div>
+
+                                <!-- Cart Button -->
+                                <div class="cart-btn">
+                                    <p><span class="icon-shopping-cart"></span> <span class="quantity">1</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Nav End -->
+
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
 <script> async function getUserDetails() {
             const username = document.getElementById('username').value;
             const url = `/api/users/${username}`;

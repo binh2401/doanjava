@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhac List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Custom CSS styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .card img {
+            max-width: 100%;
+            height: auto;
+        }
+        .card-body {
+            padding: 15px;
+        }
+        .card-title {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .card-text {
+            font-size: 14px;
+            color: #666;
+        }
+        .btn {
+            font-size: 14px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>Wellcome page add</h1>
+<a href="/add">Thêm nhạc mới</a>
+<div class="container">
+    <h1 class="mt-4 mb-4">Danh sách nhạc</h1>
+
+    <!-- Search Form -->
+    <div class="mb-4">
+        <form id="searchForm" onsubmit="searchNhac(event)">
+            <div class="form-row">
+                <div class="col">
+                    <input type="text" id="searchTerm" placeholder="Tìm kiếm nhạc" class="form-control mb-2">
+                </div>
+                <div class="col">
+                    <input type="text" id="searchAuthor" placeholder="Tìm kiếm theo tác giả" class="form-control mb-2">
+                </div>
+                <div class="col">
+                    <input type="text" id="searchGenre" placeholder="Tìm kiếm theo thể loại" class="form-control mb-2">
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-primary mb-2">Tìm kiếm</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="nhacContainer" class="row">
+    </div>
+</div>
+
+<p id="loggedInUser"></p>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchNhacList();
+        fetchLoggedInUser();
+    });
+
+    async function fetchNhacList() {
+        try {
+            const response = await fetch('/api/nhac');
+            if (!response.ok) {
+                throw new Error('Không thể lấy danh sách nhạc.');
+            }
+            const nhacList = await response.json();
+            displayNhacList(nhacList);
+        } catch (error) {
+            console.error('Lỗi khi lấy danh sách nhạc:', error);
+            alert('Không thể lấy danh sách nhạc.');
+        }
+    }
+
+    function displayNhacList(nhacList) {
+        const nhacContainer = document.getElementById('nhacContainer');
+        nhacContainer.innerHTML = ''; // Clear previous content
+
+        nhacList.forEach(nhac => {
+            const nhacElement = createNhacCard(nhac);
+            nhacContainer.appendChild(nhacElement);
+        });
+    }
+
+    function createNhacCard(nhac) {
+        const card = document.createElement('div');
+        card.classList.add('col-md-4');
+
+        const cardContent = `
+            <div class="card">
+                <img src="${nhac.imagePath}" class="card-img-top" alt="${nhac.ten}">
+                <div class="card-body">
+                    <h5 class="card-title">${nhac.ten}</h5>
+                    <p class="card-text"><strong>Tác giả:</strong> ${nhac.tacgia}</p>
+                    <p class="card-text"><strong>Thể loại:</strong> ${nhac.theloai}</p>
+                   <audio id="audioPlayer" controls style="width: 100%;">
+                     <source src="${nhac.audioPath}" type="audio/mp3">
+                     Your browser does not support the audio element.
+                    </audio>
+                    <div class="mt-3">
+                        <button class="btn btn-danger btn-sm" onclick="deleteNhac('${nhac.id}')">Xóa</button>
+                        <button class="btn btn-primary btn-sm" onclick="editNhac('${nhac.id}')">Sửa</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        card.innerHTML = cardContent;
+        return card;
+    }
+
+    async function deleteNhac(nhacId) {
+        const confirmDelete = confirm('Bạn có chắc muốn xóa nhạc này?');
+        if (confirmDelete) {
+            try {
+                const response = await fetch(`/api/nhac/delete/${nhacId}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) {
+                    throw new Error('Xóa nhạc không thành công.');
+                }
+                fetchNhacList(); // Refresh the list after deletion
+            } catch (error) {
+                console.error('Lỗi khi xóa nhạc:', error);
+                alert('Xóa nhạc không thành công.');
+            }
+        }
+    }
+
+    async function editNhac(nhacId) {
+        try {
+            const response = await fetch(`/api/nhac/${nhacId}`);
+            if (!response.ok) {
+                throw new Error('Không thể lấy thông tin nhạc.');
+            }
+            const nhac = await response.json();
+            // Redirect to edit page with nhacId as query parameter
+            window.location.href = `/sua?id=${nhacId}`;
+        } catch (error) {
+            console.error('Lỗi khi lấy thông tin nhạc:', error);
+            alert('Không thể lấy thông tin nhạc.');
+        }
+    }
+
+    async function fetchLoggedInUser() {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('Token không tồn tại.');
+            }
+            const response = await fetch('/api/user/{username}', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Không thể lấy thông tin người dùng.');
+            }
+            const user = await response.json();
+            const loggedInUserElement = document.getElementById('loggedInUser');
+            loggedInUserElement.textContent = `Đang đăng nhập: ${user.username}`;
+            loggedInUserElement.style.display = 'block';
+        } catch (error) {
+            console.error('Lỗi khi lấy thông tin người dùng:', error);
+            alert('Không thể lấy thông tin người dùng.');
+        }
+    }
+
+    async function searchNhac(event) {
+        event.preventDefault();
+        const searchTerm = document.getElementById('searchTerm').value.trim();
+        const searchAuthor = document.getElementById('searchAuthor').value.trim();
+        const searchGenre = document.getElementById('searchGenre').value.trim();
+
+        if (searchTerm === '' && searchAuthor === '' && searchGenre === '') {
+            // If all search terms are empty, fetch all music
+            fetchNhacList();
+            return;
+        }
+
+        try {
+            let query = '/api/nhac/search?';
+            if (searchTerm) {
+                query += `ten=${searchTerm}&`;
+            }
+            if (searchAuthor) {
+                query += `tacgia=${searchAuthor}&`;
+            }
+            if (searchGenre) {
+                query += `theloai=${searchGenre}`;
+            }
+
+            const response = await fetch(query);
+            if (!response.ok) {
+                throw new Error('Không thể tìm kiếm nhạc.');
+            }
+            const nhacList = await response.json();
+            displayNhacList(nhacList);
+        } catch (error) {
+            console.error('Lỗi khi tìm kiếm nhạc:', error);
+            alert('Không thể tìm kiếm nhạc.');
+        }
+    }
+</script>
+
+</body>
+</html>

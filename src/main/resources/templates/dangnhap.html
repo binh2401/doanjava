@@ -1,9 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng ký và Đăng nhập</title>
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <!-- Title -->
+    <title>One Music - Modern Music HTML5 Template</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="img/core-img/favicon.ico">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+
     <script>
         async function registerUser(event) {
             event.preventDefault();
@@ -37,25 +49,58 @@
     </script>
 </head>
 <body>
-<h1>Đăng ký</h1>
-<form id="register-form" onsubmit="registerUser(event)">
-    <label for="register-username">Tên đăng nhập:</label>
-    <input type="text" id="register-username" name="username" required>
-    <br>
-    <label for="register-password">Mật khẩu:</label>
-    <input type="password" id="register-password" name="password" required>
-    <br>
-    <label for="register-email">Email:</label>
-    <input type="email" id="register-email" name="email" required>
-    <br>
-    <label for="register-phone">Số điện thoại:</label>
-    <input type="tel" id="register-phone" name="phone" required>
-    <br>
-    <button type="submit">Đăng ký</button>
-</form>
+<th:block th:replace="Layout::header"></th:block>
+<section class="breadcumb-area bg-img bg-overlay" style="background-image: url(img/bg-img/breadcumb3.jpg);">
+    <div class="bradcumbContent">
+        <p>See what’s new</p>
+        <h2>Login</h2>
+    </div>
+</section>
+<section class="login-area section-padding-100">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
+                <div class="login-content">
+                    <h3>Welcome Back</h3>
+                    <!-- Login Form -->
+                    <div class="login-form">
+                        <form id="register-form" onsubmit="registerUser(event)" method="post">
+                            <div class="form-group">
+                                <label for="register-username">Username:</label>
+                                <input type="text" class="form-control" name="username" required id="register-username" aria-describedby="emailHelp" placeholder="Enter Username">
+                                <small id="emailHelp" class="form-text text-muted"><i class="fa fa-lock mr-2"></i>We'll never share your email with anyone else.</small>
+                            </div>
+                            <div class="register-password">
+                                <label for="register-password">Password</label>
+                                <input type="password" class="form-control" id="register-password"  required placeholder="Password">
+                            </div>
+                            <div class="register-email">
+                                <label for="register-email">email</label>
+                                <input type="email" class="form-control"  id="register-email" name="email" required placeholder="email">
+                            </div>
+                            <div class="register-phone">
+                                <label for="register-phone">phone</label>
+                                <input type="tel" class="form-control" id="register-phone" name="phone" required placeholder="phone">
+                            </div>
+                            <button type="submit" class="btn oneMusic-btn mt-30">Login</button>
+                        </form>
+
+                    </div>
+                    <P> Về trang đăng nhập <a href="/dn">ĐĂNG NHẬP</a></P>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 <p id="register-message"></p>
-
-
-
+<script src="js/jquery/jquery-2.2.4.min.js"></script>
+<!-- Popper js -->
+<script src="js/bootstrap/popper.min.js"></script>
+<!-- Bootstrap js -->
+<script src="js/bootstrap/bootstrap.min.js"></script>
+<!-- All Plugins js -->
+<script src="js/plugins/plugins.js"></script>
+<!-- Active js -->
+<script src="js/active.js"></script>
 </body>
 </html>

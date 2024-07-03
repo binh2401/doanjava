@@ -19,4 +19,8 @@ public class useruicontroller {
     public String sua(){
         return "admin/user-edit";
     }
+    @GetMapping("/nhac")
+    public String list(){
+        return "admin/list-nhac";
+    }
 }
